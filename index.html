@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RouteFlow — Smart Delivery Planner</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --bg: #0a0f0d;
+    --surface: #111a15;
+    --card: #162019;
+    --border: #1e3025;
+    --accent: #00e87a;
+    --accent2: #00c464;
+    --accent-dim: rgba(0,232,122,0.12);
+    --accent-glow: rgba(0,232,122,0.25);
+    --text: #e8f5ec;
+    --muted: #6b8f75;
+    --warn: #f5a623;
+    --danger: #ff5f57;
+    --tag-bg: rgba(0,232,122,0.08);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,232,122,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,232,122,0.025) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: sticky; top: 0; z-index: 100;
+    padding: 16px 32px;
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(10,15,13,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo-mark {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--accent);
+    display: grid; place-items: center;
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 16px; color: #000;
+    flex-shrink: 0;
+  }
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 18px; letter-spacing: -0.5px;
+  }
+  .logo-text span { color: var(--accent); }
+  .header-badge {
+    margin-left: auto;
+    padding: 4px 12px; border-radius: 20px;
+    background: var(--accent-dim);
+    border: 1px solid rgba(0,232,122,0.2);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px; color: var(--accent); letter-spacing: 0.5px;
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .container {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(32px, 5vw, 52px);
+    font-weight: 800; letter-spacing: -2px;
+    line-height: 1.1; margin-bottom: 14px;
+  }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p {
+    color: var(--muted); font-size: 16px; max-width: 480px; margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* ── UPLOAD ZONE ── */
+  .upload-zone {
+    border: 2px dashed var(--border);
+    border-radius: 20px;
+    padding: 52px 32px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    background: var(--surface);
+    position: relative; overflow: hidden;
+    margin-bottom: 32px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--accent);
+    background: rgba(0,232,122,0.04);
+    box-shadow: 0 0 40px var(--accent-glow);
+  }
+  .upload-zone::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(0,232,122,0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .upload-icon {
+    font-size: 48px; margin-bottom: 14px;
+    display: block;
+    filter: drop-shadow(0 0 12px var(--accent-glow));
+  }
+  .upload-zone h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px; font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .upload-zone p { color: var(--muted); font-size: 14px; }
+  .upload-zone .hint {
+    margin-top: 16px;
+    display: inline-block;
+    padding: 6px 16px; border-radius: 20px;
+    background: var(--tag-bg); border: 1px solid rgba(0,232,122,0.15);
+    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+  #fileInput { display: none; }
+
+  /* ── COLUMN MAPPER ── */
+  .mapper-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px;
+    margin-bottom: 28px;
+    display: none;
+    animation: fadeUp 0.4s ease both;
+  }
+  .mapper-card.visible { display: block; }
+  .mapper-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 700;
+    margin-bottom: 20px; color: var(--accent);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .mapper-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .mapper-field label {
+    display: block; font-size: 12px;
+    color: var(--muted); margin-bottom: 6px;
+    font-family: 'DM Mono', monospace; letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  .mapper-field select {
+    width: 100%; padding: 10px 14px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; color: var(--text);
+    font-family: 'DM Sans', sans-serif; font-size: 14px;
+    cursor: pointer; outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+  .mapper-field select:focus { border-color: var(--accent); }
+
+  /* ── START LOCATION ── */
+  .start-loc-row {
+    display: flex; gap: 12px; align-items: flex-end;
+    margin-bottom: 8px;
+  }
+  .start-loc-row .mapper-field { flex: 1; }
+  .btn-detect {
+    padding: 10px 18px; border-radius: 10px;
+    background: var(--accent-dim); border: 1px solid rgba(0,232,122,0.2);
+    color: var(--accent); font-size: 13px; cursor: pointer;
+    white-space: nowrap; transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+    flex-shrink: 0; margin-bottom: 0;
+  }
+  .btn-detect:hover { background: rgba(0,232,122,0.2); }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px; border-radius: 12px;
+    background: var(--accent); color: #000;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 700;
+    cursor: pointer; border: none;
+    transition: all 0.2s; letter-spacing: -0.3px;
+  }
+  .btn-primary:hover {
+    background: #00ff88;
+    box-shadow: 0 0 28px var(--accent-glow);
+    transform: translateY(-1px);
+  }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 10px 20px; border-radius: 10px;
+    background: transparent; color: var(--muted);
+    font-size: 14px; cursor: pointer;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
+
+  /* ── RESULTS ── */
+  .results-section { display: none; animation: fadeUp 0.4s ease both; }
+  .results-section.visible { display: block; }
+
+  .results-header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px;
+    margin-bottom: 24px;
+  }
+  .results-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+  }
+  .stats-row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 28px;
+  }
+  .stat-chip {
+    padding: 8px 16px; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    font-family: 'DM Mono', monospace; font-size: 12px;
+    color: var(--muted); display: flex; align-items: center; gap: 6px;
+  }
+  .stat-chip strong { color: var(--accent); font-family: 'Syne', sans-serif; font-size: 14px; }
+
+  /* ── ROUTE LIST ── */
+  .route-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .route-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 18px 20px;
+    display: flex; align-items: flex-start; gap: 16px;
+    transition: all 0.2s;
+    cursor: default;
+    position: relative; overflow: hidden;
+  }
+  .route-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .route-card:hover { border-color: rgba(0,232,122,0.3); transform: translateX(4px); }
+  .route-card:hover::before { opacity: 1; }
+  .route-card.start-card { border-color: rgba(0,232,122,0.25); background: rgba(0,232,122,0.04); }
+  .route-card.start-card::before { opacity: 1; }
+
+  .stop-num {
+    width: 36px; height: 36px; border-radius: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    display: grid; place-items: center; flex-shrink: 0;
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+    color: var(--muted);
+  }
+  .route-card.start-card .stop-num {
+    background: var(--accent); color: #000;
+    border-color: var(--accent); font-size: 16px;
+  }
+
+  .route-info { flex: 1; min-width: 0; }
+  .route-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px; font-weight: 700;
+    margin-bottom: 4px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .route-addr {
+    font-size: 13px; color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 8px;
+  }
+  .route-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag {
+    padding: 3px 10px; border-radius: 8px;
+    font-family: 'DM Mono', monospace; font-size: 11px;
+    letter-spacing: 0.3px;
+  }
+  .tag-green { background: var(--tag-bg); color: var(--accent); border: 1px solid rgba(0,232,122,0.15); }
+  .tag-orange { background: rgba(245,166,35,0.1); color: var(--warn); border: 1px solid rgba(245,166,35,0.15); }
+  .tag-gray { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
+
+  .route-dist {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+    flex-shrink: 0;
+  }
+  .dist-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px; font-weight: 700; color: var(--accent);
+  }
+  .dist-label { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+
+  .connector {
+    display: flex; align-items: center; gap: 10px;
+    padding: 0 20px; color: var(--muted);
+    font-size: 12px; font-family: 'DM Mono', monospace;
+  }
+  .connector-line {
+    flex: 1; height: 1px;
+    background: repeating-linear-gradient(90deg, var(--border) 0, var(--border) 6px, transparent 6px, transparent 12px);
+  }
+
+  /* ── MAP SECTION ── */
+  .map-section {
+    margin-top: 32px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; overflow: hidden;
+  }
+  .map-header {
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 10px;
+  }
+  .map-header h3 {
+    font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+  }
+  .map-actions { display: flex; gap: 10px; }
+  #mapFrame {
+    width: 100%; height: 420px;
+    border: none; display: block;
+    background: var(--surface);
+  }
+
+  /* ── EXPORT BAR ── */
+  .export-bar {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-top: 24px; padding: 20px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; align-items: center;
+  }
+  .export-bar span {
+    color: var(--muted); font-size: 14px; flex: 1;
+    min-width: 150px;
+  }
+
+  /* ── LOADING ── */
+  .loading-overlay {
+    position: fixed; inset: 0;
+    background: rgba(10,15,13,0.92);
+    backdrop-filter: blur(8px);
+    z-index: 999;
+    display: none; place-items: center;
+  }
+  .loading-overlay.show { display: grid; }
+  .loading-box {
+    text-align: center;
+    animation: fadeUp 0.3s ease both;
+  }
+  .spinner {
+    width: 48px; height: 48px; border-radius: 50%;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 20px;
+  }
+  .loading-box p { color: var(--muted); font-size: 15px; }
+  .loading-box strong { display: block; font-family: 'Syne', sans-serif; font-size: 20px; margin-bottom: 6px; color: var(--accent); }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 20px;
+    font-size: 14px; opacity: 0;
+    transition: all 0.3s; z-index: 9999;
+    display: flex; align-items: center; gap: 8px;
+    pointer-events: none;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: rgba(0,232,122,0.3); color: var(--accent); }
+  .toast.error { border-color: rgba(255,95,87,0.3); color: var(--danger); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── TEMPLATE SECTION ── */
+  .template-row {
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-top: 16px; justify-content: center;
+  }
+  .template-chip {
+    padding: 6px 16px; border-radius: 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    font-size: 13px; cursor: pointer; color: var(--muted);
+    transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+  }
+  .template-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+  @media (max-width: 600px) {
+    header { padding: 12px 16px; }
+    .container { padding: 24px 16px 60px; }
+    .route-card { flex-wrap: wrap; }
+    .route-dist { flex-direction: row; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">RF</div>
+  <span class="logo-text">Route<span>Flow</span></span>
+  <div class="header-badge">DELIVERY PLANNER</div>
+</header>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Plan your <em>perfect</em><br>delivery route</h1>
+    <p>Upload your Excel file with delivery locations. We'll sort them into the optimal route — closest stop first, every time.</p>
+    <div class="template-row">
+      <div class="template-chip" onclick="downloadTemplate()">📄 Download Sample Excel</div>
+      <div class="template-chip" id="demoBtn" onclick="loadDemo()">⚡ Try Demo Data</div>
+    </div>
+  </div>
+
+  <!-- UPLOAD ZONE -->
+  <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+    <span class="upload-icon">📦</span>
+    <h2>Drop your Excel file here</h2>
+    <p>Supports .xlsx, .xls, .csv formats</p>
+    <span class="hint">CLICK TO BROWSE FILES</span>
+    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+  </div>
+
+  <!-- COLUMN MAPPER -->
+  <div class="mapper-card" id="mapperCard">
+    <div class="mapper-title">⚙️ Map your columns</div>
+
+    <div class="start-loc-row">
+      <div class="mapper-field" style="flex:1">
+        <label>Your Starting Location</label>
+        <input type="text" id="startLocation" placeholder="e.g. Mumbai Central, Mumbai"
+          style="width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;"
+          onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+      </div>
+      <button class="btn-detect" onclick="detectLocation()">📍 Detect Me</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:20px;">Enter your current location / warehouse / starting point for the route.</p>
+
+    <div class="mapper-grid" id="mapperGrid">
+      <!-- Dynamically populated -->
+    </div>
+
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:8px;">
+      <button class="btn-primary" id="planBtn" onclick="buildRoute()">🗺️ Plan Optimal Route</button>
+      <button class="btn-secondary" onclick="resetApp()">✕ Start Over</button>
+    </div>
+  </div>
+
+  <!-- RESULTS SECTION -->
+  <div class="results-section" id="resultsSection">
+    <div class="results-header">
+      <div>
+        <div class="results-title">Your Delivery Route</div>
+      </div>
+      <button class="btn-secondary" onclick="resetApp()">↩ Upload New File</button>
+    </div>
+
+    <div class="stats-row" id="statsRow"></div>
+
+    <div class="route-list" id="routeList"></div>
+
+    <!-- MAP -->
+    <div class="map-section">
+      <div class="map-header">
+        <h3>🗺️ Route Map</h3>
+        <div class="map-actions">
+          <button class="btn-secondary" onclick="openInGoogleMaps()" style="font-size:13px;padding:8px 14px;">Open in Google Maps ↗</button>
+        </div>
+      </div>
+      <iframe id="mapFrame" src="" title="Route Map"></iframe>
+    </div>
+
+    <!-- EXPORT -->
+    <div class="export-bar">
+      <span>Export your optimized route</span>
+      <button class="btn-secondary" onclick="exportCSV()">📊 Export CSV</button>
+      <button class="btn-secondary" onclick="copyAddresses()">📋 Copy All Addresses</button>
+      <button class="btn-primary" onclick="openInGoogleMaps()">Navigate in Maps →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <strong>Optimizing Route...</strong>
+    <p>Sorting stops by nearest distance</p>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STATE ───────────────────────────────────────────────
+let rawData = [];
+let columns = [];
+let routeData = [];
+let userLat = null, userLng = null;
+let userLocationName = '';
+
+// ─── FILE UPLOAD ──────────────────────────────────────────
+const uploadZone = document.getElementById('uploadZone');
+const fileInput  = document.getElementById('fileInput');
+
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
+uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault(); uploadZone.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) processFile(file);
+});
+fileInput.addEventListener('change', e => {
+  if (e.target.files[0]) processFile(e.target.files[0]);
+});
+
+function processFile(file) {
+  const ext = file.name.split('.').pop().toLowerCase();
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      let data;
+      if (ext === 'csv') {
+        data = parseCSV(e.target.result);
+      } else {
+        const wb = XLSX.read(e.target.result, { type: 'binary' });
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        data = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      }
+      if (!data || data.length === 0) { showToast('File is empty or unreadable.', 'error'); return; }
+      rawData = data;
+      columns = Object.keys(data[0]);
+      showMapper();
+      showToast(`✓ Loaded ${data.length} rows from "${file.name}"`, 'success');
+    } catch (err) {
+      showToast('Error reading file. Please check format.', 'error');
+    }
+  };
+  if (ext === 'csv') reader.readAsText(file);
+  else reader.readAsBinaryString(file);
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+  return lines.slice(1).map(line => {
+    const vals = line.split(',').map(v => v.trim().replace(/"/g, ''));
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = vals[i] || '');
+    return obj;
+  });
+}
+
+// ─── MAPPER UI ────────────────────────────────────────────
+function showMapper() {
+  const grid = document.getElementById('mapperGrid');
+  const fields = [
+    { key: 'nameCol',    label: 'Customer / Stop Name', emoji: '👤' },
+    { key: 'addrCol',    label: 'Address / Area',        emoji: '📍' },
+    { key: 'cityCol',    label: 'City (optional)',        emoji: '🏙️' },
+    { key: 'phoneCol',   label: 'Phone (optional)',       emoji: '📞' },
+    { key: 'notesCol',   label: 'Notes (optional)',       emoji: '📝' },
+  ];
+  const opts = ['-- Skip --', ...columns].map(c => `<option value="${c}">${c}</option>`).join('');
+
+  grid.innerHTML = fields.map(f => `
+    <div class="mapper-field">
+      <label>${f.emoji} ${f.label}</label>
+      <select id="${f.key}">${opts}</select>
+    </div>
+  `).join('');
+
+  // Auto-detect columns
+  autoMap('nameCol',  ['name','customer','client','shop','store','recipient','person','delivery_name','contact']);
+  autoMap('addrCol',  ['address','addr','location','area','street','place','locality','full_address','delivery_address']);
+  autoMap('cityCol',  ['city','town','district','zone','region']);
+  autoMap('phoneCol', ['phone','mobile','contact','number','cell']);
+  autoMap('notesCol', ['notes','remark','note','instruction','comment','info']);
+
+  document.getElementById('mapperCard').classList.add('visible');
+  document.getElementById('mapperCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function autoMap(selectId, keywords) {
+  const sel = document.getElementById(selectId);
+  const match = columns.find(c => keywords.some(k => c.toLowerCase().includes(k)));
+  if (match) sel.value = match;
+}
+
+// ─── DETECT LOCATION ─────────────────────────────────────
+function detectLocation() {
+  if (!navigator.geolocation) { showToast('Geolocation not supported.', 'error'); return; }
+  showToast('Detecting your location...', 'success');
+  navigator.geolocation.getCurrentPosition(pos => {
+    userLat = pos.coords.latitude;
+    userLng = pos.coords.longitude;
+    const inp = document.getElementById('startLocation');
+    inp.value = `${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
+    userLocationName = 'Your Location';
+    showToast('📍 Location detected!', 'success');
+  }, () => {
+    showToast('Could not detect location. Enter manually.', 'error');
+  });
+}
+
+// ─── BUILD ROUTE ──────────────────────────────────────────
+async function buildRoute() {
+  const addrCol  = document.getElementById('addrCol').value;
+  const nameCol  = document.getElementById('nameCol').value;
+  const cityCol  = document.getElementById('cityCol').value;
+  const phoneCol = document.getElementById('phoneCol').value;
+  const notesCol = document.getElementById('notesCol').value;
+  const startLoc = document.getElementById('startLocation').value.trim();
+
+  if (addrCol === '-- Skip --') { showToast('Please select the Address column.', 'error'); return; }
+
+  document.getElementById('loadingOverlay').classList.add('show');
+
+  // Parse start location
+  let startLatLng = null;
+  if (startLoc) {
+    const coordMatch = startLoc.match(/^(-?\d+\.?\d*)[,\s]+(-?\d+\.?\d*)$/);
+    if (coordMatch) {
+      startLatLng = { lat: parseFloat(coordMatch[1]), lng: parseFloat(coordMatch[2]) };
+    } else if (userLat && userLng) {
+      startLatLng = { lat: userLat, lng: userLng };
+    } else {
+      // Use geocoding attempt via nominatim
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(startLoc)}&format=json&limit=1`);
+        const json = await res.json();
+        if (json[0]) startLatLng = { lat: parseFloat(json[0].lat), lng: parseFloat(json[0].lon) };
+      } catch (e) { /* ignore */ }
+    }
+  }
+
+  // Build stops array
+  const stops = rawData.map((row, i) => {
+    const addr = [row[addrCol], cityCol !== '-- Skip --' ? row[cityCol] : '']
+                  .filter(Boolean).join(', ');
+    return {
+      id: i + 1,
+      name:  nameCol  !== '-- Skip --' ? row[nameCol]  || `Stop ${i+1}` : `Stop ${i+1}`,
+      addr,
+      phone: phoneCol !== '-- Skip --' ? row[phoneCol] || '' : '',
+      notes: notesCol !== '-- Skip --' ? row[notesCol] || '' : '',
+      lat: null, lng: null,
+    };
+  }).filter(s => s.addr.trim());
+
+  // Geocode all addresses (batched via Nominatim)
+  for (const stop of stops) {
+    try {
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(stop.addr)}&format=json&limit=1`);
+      const json = await res.json();
+      if (json[0]) { stop.lat = parseFloat(json[0].lat); stop.lng = parseFloat(json[0].lon); }
+    } catch (e) { /* ignore */ }
+    await sleep(300); // rate limit
+  }
+
+  // Filter geocoded stops
+  const geoStops = stops.filter(s => s.lat && s.lng);
+  if (geoStops.length === 0) {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    showToast('Could not geocode any addresses. Check address format.', 'error');
+    return;
+  }
+
+  // Nearest-neighbor sort from start point
+  let origin = startLatLng || (geoStops[0] ? { lat: geoStops[0].lat, lng: geoStops[0].lng } : null);
+  const sorted = nearestNeighbor(geoStops, origin);
+
+  routeData = sorted;
+  userLocationName = startLoc || 'Start';
+
+  document.getElementById('loadingOverlay').classList.remove('show');
+  renderResults(sorted, origin, startLoc);
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─── NEAREST NEIGHBOR ALGORITHM ──────────────────────────
+function nearestNeighbor(stops, origin) {
+  const remaining = [...stops];
+  const sorted = [];
+  let cur = origin;
+
+  while (remaining.length > 0) {
+    let bestIdx = 0, bestDist = Infinity;
+    remaining.forEach((s, i) => {
+      const d = haversine(cur.lat, cur.lng, s.lat, s.lng);
+      if (d < bestDist) { bestDist = d; bestIdx = i; }
+    });
+    const best = remaining.splice(bestIdx, 1)[0];
+    best.distFromPrev = haversine(cur.lat, cur.lng, best.lat, best.lng);
+    sorted.push(best);
+    cur = { lat: best.lat, lng: best.lng };
+  }
+  return sorted;
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+// ─── RENDER RESULTS ───────────────────────────────────────
+function renderResults(stops, origin, startLabel) {
+  const totalDist = stops.reduce((s, r) => s + (r.distFromPrev || 0), 0);
+  const geocodedPct = Math.round(stops.length / rawData.length * 100);
+
+  // Stats
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-chip"><strong>${stops.length}</strong> stops</div>
+    <div class="stat-chip"><strong>${totalDist.toFixed(1)} km</strong> total route</div>
+    <div class="stat-chip"><strong>~${Math.round(totalDist / 30 * 60)} min</strong> est. drive time</div>
+    <div class="stat-chip"><strong>${geocodedPct}%</strong> addresses found</div>
+  `;
+
+  // Route list
+  const list = document.getElementById('routeList');
+  let html = '';
+
+  // Start card
+  if (startLabel) {
+    html += `<div class="route-card start-card">
+      <div class="stop-num">📍</div>
+      <div class="route-info">
+        <div class="route-name">Start: ${escHtml(startLabel)}</div>
+        <div class="route-addr">Your departure point</div>
+        <div class="route-tags"><span class="tag tag-green">START</span></div>
+      </div>
+    </div>`;
+  }
+
+  stops.forEach((s, i) => {
+    const dist = s.distFromPrev ? `${s.distFromPrev.toFixed(1)} km` : '—';
+    html += `
+      <div class="connector">
+        <div class="connector-line"></div>
+        <span>▼ ${dist}</span>
+        <div class="connector-line"></div>
+      </div>
+      <div class="route-card" style="animation-delay:${i * 0.04}s">
+        <div class="stop-num">${i + 1}</div>
+        <div class="route-info">
+          <div class="route-name">${escHtml(s.name)}</div>
+          <div class="route-addr">${escHtml(s.addr)}</div>
+          <div class="route-tags">
+            ${s.phone ? `<span class="tag tag-gray">📞 ${escHtml(s.phone)}</span>` : ''}
+            ${s.notes ? `<span class="tag tag-orange">📝 ${escHtml(s.notes)}</span>` : ''}
+          </div>
+        </div>
+        <div class="route-dist">
+          <div class="dist-val">${dist}</div>
+          <div class="dist-label">from prev</div>
+        </div>
+      </div>
+    `;
+  });
+  list.innerHTML = html;
+
+  // Map embed
+  const waypoints = stops.slice(1, -1).map(s => `${s.lat},${s.lng}`).join('|');
+  const first = stops[0], last = stops[stops.length - 1];
+  const org = origin ? `${origin.lat},${origin.lng}` : `${first.lat},${first.lng}`;
+  const dest = `${last.lat},${last.lng}`;
+  const mapUrl = `https://www.google.com/maps/embed/v1/directions?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&origin=${org}&destination=${dest}&waypoints=${waypoints}&mode=driving`;
+  document.getElementById('mapFrame').src = mapUrl;
+
+  document.getElementById('mapperCard').classList.remove('visible');
+  document.getElementById('resultsSection').classList.add('visible');
+  document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ─── OPEN IN GOOGLE MAPS ─────────────────────────────────
+function openInGoogleMaps() {
+  if (!routeData.length) return;
+  const origin = document.getElementById('startLocation')?.value?.trim() || '';
+  const dest = routeData[routeData.length - 1].addr;
+  const wps = routeData.slice(0, -1).map(s => encodeURIComponent(s.addr)).join('/');
+  const url = `https://www.google.com/maps/dir/${encodeURIComponent(origin || routeData[0].addr)}/${wps}/${encodeURIComponent(dest)}`;
+  window.open(url, '_blank');
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────
+function exportCSV() {
+  if (!routeData.length) return;
+  const headers = ['Stop #', 'Name', 'Address', 'Phone', 'Notes', 'Distance from Prev (km)'];
+  const rows = routeData.map((s, i) => [
+    i + 1, s.name, s.addr, s.phone, s.notes,
+    s.distFromPrev ? s.distFromPrev.toFixed(2) : ''
+  ]);
+  const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'optimized-route.csv'; a.click();
+  showToast('✓ CSV exported!', 'success');
+}
+
+// ─── COPY ADDRESSES ───────────────────────────────────────
+function copyAddresses() {
+  const text = routeData.map((s, i) => `${i+1}. ${s.name} — ${s.addr}`).join('\n');
+  navigator.clipboard.writeText(text).then(() => showToast('✓ Addresses copied!', 'success'));
+}
+
+// ─── DOWNLOAD TEMPLATE ───────────────────────────────────
+function downloadTemplate() {
+  const ws = XLSX.utils.aoa_to_sheet([
+    ['Customer Name', 'Address', 'City', 'Phone', 'Notes'],
+    ['Raj Kumar', 'Shop 12, MG Road', 'Bangalore', '9876543210', 'Call before delivery'],
+    ['Sunita Sharma', 'Flat 4B, Andheri West', 'Mumbai', '9123456789', ''],
+    ['Vikram Patel', '22 Park Street', 'Kolkata', '9988776655', 'Leave at door'],
+    ['Priya Singh', 'B-14 Sector 18', 'Noida', '8877665544', ''],
+    ['Arun Mehta', '7 Gandhi Nagar', 'Jaipur', '9090909090', 'Morning only'],
+  ]);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Deliveries');
+  XLSX.writeFile(wb, 'delivery-template.xlsx');
+  showToast('✓ Template downloaded!', 'success');
+}
+
+// ─── DEMO DATA ────────────────────────────────────────────
+function loadDemo() {
+  const demoData = [
+    { 'Customer Name': 'Raj Kumar',    'Address': 'MG Road, Bangalore',       'City': 'Bangalore', 'Phone': '9876543210', 'Notes': 'Call before' },
+    { 'Customer Name': 'Sunita Sharma','Address': 'Andheri West, Mumbai',      'City': 'Mumbai',    'Phone': '9123456789', 'Notes': '' },
+    { 'Customer Name': 'Vikram Patel', 'Address': 'Park Street, Kolkata',      'City': 'Kolkata',   'Phone': '9988776655', 'Notes': 'Leave at door' },
+    { 'Customer Name': 'Priya Singh',  'Address': 'Sector 18, Noida',          'City': 'Noida',     'Phone': '8877665544', 'Notes': '' },
+    { 'Customer Name': 'Arun Mehta',   'Address': 'Gandhi Nagar, Jaipur',      'City': 'Jaipur',    'Phone': '9090909090', 'Notes': 'Morning only' },
+    { 'Customer Name': 'Deepa Nair',   'Address': 'Anna Nagar, Chennai',       'City': 'Chennai',   'Phone': '7766554433', 'Notes': '' },
+    { 'Customer Name': 'Mohan Das',    'Address': 'Banjara Hills, Hyderabad',  'City': 'Hyderabad', 'Phone': '9955443322', 'Notes': '' },
+  ];
+  rawData = demoData;
+  columns = Object.keys(demoData[0]);
+  showMapper();
+  showToast('✓ Demo data loaded! Map columns and plan your route.', 'success');
+}
+
+// ─── RESET ────────────────────────────────────────────────
+function resetApp() {
+  rawData = []; columns = []; routeData = [];
+  userLat = null; userLng = null;
+  document.getElementById('mapperCard').classList.remove('visible');
+  document.getElementById('resultsSection').classList.remove('visible');
+  document.getElementById('fileInput').value = '';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── TOAST ───────────────────────────────────────────────
+function showToast(msg, type = 'success') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+function escHtml(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
