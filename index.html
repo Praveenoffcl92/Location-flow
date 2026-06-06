@@ -13,7 +13,6 @@
     --card: #162019;
     --border: #1e3025;
     --accent: #00e87a;
-    --accent2: #00c464;
     --accent-dim: rgba(0,232,122,0.12);
     --accent-glow: rgba(0,232,122,0.25);
     --text: #e8f5ec;
@@ -24,94 +23,70 @@
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-
   body {
-    background: var(--bg);
-    color: var(--text);
+    background: var(--bg); color: var(--text);
     font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
+    min-height: 100vh; overflow-x: hidden;
   }
-
-  /* Background grid */
   body::before {
-    content: '';
-    position: fixed; inset: 0;
+    content: ''; position: fixed; inset: 0;
     background-image:
       linear-gradient(rgba(0,232,122,0.025) 1px, transparent 1px),
       linear-gradient(90deg, rgba(0,232,122,0.025) 1px, transparent 1px);
     background-size: 40px 40px;
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
-
-  /* ── HEADER ── */
   header {
     position: sticky; top: 0; z-index: 100;
     padding: 16px 32px;
     display: flex; align-items: center; gap: 14px;
-    background: rgba(10,15,13,0.85);
+    background: rgba(10,15,13,0.9);
     backdrop-filter: blur(16px);
     border-bottom: 1px solid var(--border);
   }
   .logo-mark {
     width: 36px; height: 36px; border-radius: 10px;
-    background: var(--accent);
-    display: grid; place-items: center;
-    font-family: 'Syne', sans-serif; font-weight: 800;
-    font-size: 16px; color: #000;
+    background: var(--accent); display: grid; place-items: center;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; color: #000;
     flex-shrink: 0;
   }
-  .logo-text {
-    font-family: 'Syne', sans-serif;
-    font-weight: 700; font-size: 18px; letter-spacing: -0.5px;
-  }
+  .logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -0.5px; }
   .logo-text span { color: var(--accent); }
   .header-badge {
-    margin-left: auto;
-    padding: 4px 12px; border-radius: 20px;
-    background: var(--accent-dim);
-    border: 1px solid rgba(0,232,122,0.2);
-    font-family: 'DM Mono', monospace;
-    font-size: 11px; color: var(--accent); letter-spacing: 0.5px;
+    margin-left: auto; padding: 4px 12px; border-radius: 20px;
+    background: var(--accent-dim); border: 1px solid rgba(0,232,122,0.2);
+    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.5px;
   }
-
-  /* ── MAIN LAYOUT ── */
   .container {
     position: relative; z-index: 1;
-    max-width: 1100px; margin: 0 auto;
-    padding: 40px 24px 80px;
+    max-width: 1100px; margin: 0 auto; padding: 40px 24px 80px;
   }
-
-  /* ── HERO ── */
-  .hero {
-    text-align: center;
-    margin-bottom: 48px;
-    animation: fadeUp 0.6s ease both;
-  }
+  .hero { text-align: center; margin-bottom: 40px; animation: fadeUp 0.6s ease both; }
   .hero h1 {
-    font-family: 'Syne', sans-serif;
-    font-size: clamp(32px, 5vw, 52px);
-    font-weight: 800; letter-spacing: -2px;
-    line-height: 1.1; margin-bottom: 14px;
+    font-family: 'Syne', sans-serif; font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800; letter-spacing: -2px; line-height: 1.1; margin-bottom: 12px;
   }
   .hero h1 em { font-style: normal; color: var(--accent); }
-  .hero p {
-    color: var(--muted); font-size: 16px; max-width: 480px; margin: 0 auto;
-    line-height: 1.6;
+  .hero p { color: var(--muted); font-size: 15px; max-width: 500px; margin: 0 auto; line-height: 1.6; }
+
+  /* Google Link badge */
+  .glink-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    margin-top: 16px; padding: 8px 18px; border-radius: 20px;
+    background: rgba(66,133,244,0.1); border: 1px solid rgba(66,133,244,0.25);
+    font-size: 13px; color: #7ab4f5;
+    font-family: 'DM Mono', monospace; letter-spacing: 0.3px;
+  }
+  .glink-badge .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #4285f4; animation: pulse 1.5s ease infinite;
   }
 
-  /* ── UPLOAD ZONE ── */
   .upload-zone {
-    border: 2px dashed var(--border);
-    border-radius: 20px;
-    padding: 52px 32px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    background: var(--surface);
-    position: relative; overflow: hidden;
-    margin-bottom: 32px;
+    border: 2px dashed var(--border); border-radius: 20px;
+    padding: 48px 32px; text-align: center; cursor: pointer;
+    transition: all 0.25s ease; background: var(--surface);
+    position: relative; overflow: hidden; margin-bottom: 28px;
     animation: fadeUp 0.6s 0.1s ease both;
   }
   .upload-zone:hover, .upload-zone.drag-over {
@@ -120,316 +95,212 @@
     box-shadow: 0 0 40px var(--accent-glow);
   }
   .upload-zone::before {
-    content: '';
-    position: absolute; inset: 0;
+    content: ''; position: absolute; inset: 0;
     background: radial-gradient(ellipse at 50% 0%, rgba(0,232,122,0.06) 0%, transparent 60%);
     pointer-events: none;
   }
-  .upload-icon {
-    font-size: 48px; margin-bottom: 14px;
-    display: block;
-    filter: drop-shadow(0 0 12px var(--accent-glow));
-  }
-  .upload-zone h2 {
-    font-family: 'Syne', sans-serif;
-    font-size: 20px; font-weight: 700;
-    margin-bottom: 8px;
-  }
+  .upload-icon { font-size: 44px; margin-bottom: 12px; display: block; filter: drop-shadow(0 0 12px var(--accent-glow)); }
+  .upload-zone h2 { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 700; margin-bottom: 6px; }
   .upload-zone p { color: var(--muted); font-size: 14px; }
   .upload-zone .hint {
-    margin-top: 16px;
-    display: inline-block;
+    margin-top: 14px; display: inline-block;
     padding: 6px 16px; border-radius: 20px;
     background: var(--tag-bg); border: 1px solid rgba(0,232,122,0.15);
-    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent);
-    letter-spacing: 0.5px;
+    font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.5px;
   }
   #fileInput { display: none; }
 
-  /* ── COLUMN MAPPER ── */
+  /* Format info box */
+  .format-info {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 20px 24px;
+    margin-bottom: 28px; animation: fadeUp 0.6s 0.2s ease both;
+  }
+  .format-info h3 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 14px; letter-spacing: 0.5px; text-transform: uppercase; }
+  .format-modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+  .format-mode {
+    padding: 14px 16px; border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--border);
+  }
+  .format-mode .mode-icon { font-size: 20px; margin-bottom: 6px; }
+  .format-mode h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .format-mode p { font-size: 12px; color: var(--muted); line-height: 1.5; }
+  .format-mode.highlight { border-color: rgba(66,133,244,0.3); background: rgba(66,133,244,0.05); }
+  .format-mode.highlight h4 { color: #7ab4f5; }
+
   .mapper-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 20px; padding: 28px;
-    margin-bottom: 28px;
-    display: none;
-    animation: fadeUp 0.4s ease both;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px; margin-bottom: 28px;
+    display: none; animation: fadeUp 0.4s ease both;
   }
   .mapper-card.visible { display: block; }
   .mapper-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 15px; font-weight: 700;
+    font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
     margin-bottom: 20px; color: var(--accent);
     display: flex; align-items: center; gap: 8px;
   }
-  .mapper-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 20px;
-  }
+  .mapper-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px; }
   .mapper-field label {
-    display: block; font-size: 12px;
-    color: var(--muted); margin-bottom: 6px;
-    font-family: 'DM Mono', monospace; letter-spacing: 0.5px;
-    text-transform: uppercase;
+    display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px;
+    font-family: 'DM Mono', monospace; letter-spacing: 0.5px; text-transform: uppercase;
   }
-  .mapper-field select {
+  .mapper-field select, .mapper-field input {
     width: 100%; padding: 10px 14px;
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 10px; color: var(--text);
     font-family: 'DM Sans', sans-serif; font-size: 14px;
-    cursor: pointer; outline: none;
-    transition: border-color 0.2s;
-    appearance: none;
+    cursor: pointer; outline: none; transition: border-color 0.2s; appearance: none;
   }
-  .mapper-field select:focus { border-color: var(--accent); }
+  .mapper-field select:focus, .mapper-field input:focus { border-color: var(--accent); }
 
-  /* ── START LOCATION ── */
-  .start-loc-row {
-    display: flex; gap: 12px; align-items: flex-end;
-    margin-bottom: 8px;
+  /* Google link column detected banner */
+  .glink-detected {
+    display: none; align-items: center; gap: 10px;
+    padding: 12px 16px; border-radius: 12px;
+    background: rgba(66,133,244,0.08); border: 1px solid rgba(66,133,244,0.2);
+    margin-bottom: 16px; font-size: 13px; color: #7ab4f5;
   }
+  .glink-detected.show { display: flex; }
+  .glink-detected strong { color: #a8c8ff; }
+
+  .start-loc-row { display: flex; gap: 12px; align-items: flex-end; margin-bottom: 8px; }
   .start-loc-row .mapper-field { flex: 1; }
   .btn-detect {
     padding: 10px 18px; border-radius: 10px;
     background: var(--accent-dim); border: 1px solid rgba(0,232,122,0.2);
     color: var(--accent); font-size: 13px; cursor: pointer;
-    white-space: nowrap; transition: all 0.2s;
-    font-family: 'DM Sans', sans-serif;
-    flex-shrink: 0; margin-bottom: 0;
+    white-space: nowrap; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    flex-shrink: 0;
   }
   .btn-detect:hover { background: rgba(0,232,122,0.2); }
 
-  /* ── BUTTONS ── */
   .btn-primary {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 14px 28px; border-radius: 12px;
     background: var(--accent); color: #000;
-    font-family: 'Syne', sans-serif;
-    font-size: 15px; font-weight: 700;
-    cursor: pointer; border: none;
-    transition: all 0.2s; letter-spacing: -0.3px;
+    font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
+    cursor: pointer; border: none; transition: all 0.2s; letter-spacing: -0.3px;
   }
-  .btn-primary:hover {
-    background: #00ff88;
-    box-shadow: 0 0 28px var(--accent-glow);
-    transform: translateY(-1px);
-  }
+  .btn-primary:hover { background: #00ff88; box-shadow: 0 0 28px var(--accent-glow); transform: translateY(-1px); }
   .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-
   .btn-secondary {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 10px 20px; border-radius: 10px;
     background: transparent; color: var(--muted);
-    font-size: 14px; cursor: pointer;
-    border: 1px solid var(--border);
-    transition: all 0.2s;
-    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; cursor: pointer; border: 1px solid var(--border);
+    transition: all 0.2s; font-family: 'DM Sans', sans-serif;
   }
   .btn-secondary:hover { border-color: var(--muted); color: var(--text); }
 
-  /* ── RESULTS ── */
   .results-section { display: none; animation: fadeUp 0.4s ease both; }
   .results-section.visible { display: block; }
-
-  .results-header {
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 12px;
-    margin-bottom: 24px;
-  }
-  .results-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
-  }
-  .stats-row {
-    display: flex; gap: 10px; flex-wrap: wrap;
-    margin-bottom: 28px;
-  }
+  .results-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 24px; }
+  .results-title { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+  .stats-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 28px; }
   .stat-chip {
     padding: 8px 16px; border-radius: 20px;
     background: var(--surface); border: 1px solid var(--border);
-    font-family: 'DM Mono', monospace; font-size: 12px;
-    color: var(--muted); display: flex; align-items: center; gap: 6px;
+    font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted);
+    display: flex; align-items: center; gap: 6px;
   }
   .stat-chip strong { color: var(--accent); font-family: 'Syne', sans-serif; font-size: 14px; }
-
-  /* ── ROUTE LIST ── */
   .route-list { display: flex; flex-direction: column; gap: 10px; }
-
   .route-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 18px 20px;
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 18px 20px;
     display: flex; align-items: flex-start; gap: 16px;
-    transition: all 0.2s;
-    cursor: default;
-    position: relative; overflow: hidden;
+    transition: all 0.2s; position: relative; overflow: hidden;
   }
   .route-card::before {
-    content: '';
-    position: absolute; left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: var(--accent);
-    opacity: 0;
-    transition: opacity 0.2s;
+    content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--accent); opacity: 0; transition: opacity 0.2s;
   }
   .route-card:hover { border-color: rgba(0,232,122,0.3); transform: translateX(4px); }
   .route-card:hover::before { opacity: 1; }
   .route-card.start-card { border-color: rgba(0,232,122,0.25); background: rgba(0,232,122,0.04); }
   .route-card.start-card::before { opacity: 1; }
-
   .stop-num {
     width: 36px; height: 36px; border-radius: 10px;
     background: var(--surface); border: 1px solid var(--border);
     display: grid; place-items: center; flex-shrink: 0;
-    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
-    color: var(--muted);
+    font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--muted);
   }
-  .route-card.start-card .stop-num {
-    background: var(--accent); color: #000;
-    border-color: var(--accent); font-size: 16px;
-  }
-
+  .route-card.start-card .stop-num { background: var(--accent); color: #000; border-color: var(--accent); font-size: 16px; }
   .route-info { flex: 1; min-width: 0; }
-  .route-name {
-    font-family: 'Syne', sans-serif;
-    font-size: 15px; font-weight: 700;
-    margin-bottom: 4px;
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-  }
-  .route-addr {
-    font-size: 13px; color: var(--muted);
-    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    margin-bottom: 8px;
-  }
+  .route-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .route-addr { font-size: 13px; color: var(--muted); margin-bottom: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .route-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .tag {
-    padding: 3px 10px; border-radius: 8px;
-    font-family: 'DM Mono', monospace; font-size: 11px;
-    letter-spacing: 0.3px;
-  }
+  .tag { padding: 3px 10px; border-radius: 8px; font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.3px; }
   .tag-green { background: var(--tag-bg); color: var(--accent); border: 1px solid rgba(0,232,122,0.15); }
+  .tag-blue { background: rgba(66,133,244,0.1); color: #7ab4f5; border: 1px solid rgba(66,133,244,0.2); }
   .tag-orange { background: rgba(245,166,35,0.1); color: var(--warn); border: 1px solid rgba(245,166,35,0.15); }
   .tag-gray { background: var(--surface); color: var(--muted); border: 1px solid var(--border); }
-
-  .route-dist {
-    display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
-    flex-shrink: 0;
-  }
-  .dist-val {
-    font-family: 'Syne', sans-serif;
-    font-size: 16px; font-weight: 700; color: var(--accent);
-  }
+  .route-dist { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+  .dist-val { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--accent); }
   .dist-label { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+  .connector { display: flex; align-items: center; gap: 10px; padding: 0 20px; color: var(--muted); font-size: 12px; font-family: 'DM Mono', monospace; }
+  .connector-line { flex: 1; height: 1px; background: repeating-linear-gradient(90deg, var(--border) 0, var(--border) 6px, transparent 6px, transparent 12px); }
 
-  .connector {
-    display: flex; align-items: center; gap: 10px;
-    padding: 0 20px; color: var(--muted);
-    font-size: 12px; font-family: 'DM Mono', monospace;
-  }
-  .connector-line {
-    flex: 1; height: 1px;
-    background: repeating-linear-gradient(90deg, var(--border) 0, var(--border) 6px, transparent 6px, transparent 12px);
-  }
+  .map-section { margin-top: 32px; background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; }
+  .map-header { padding: 18px 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+  .map-header h3 { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+  #mapFrame { width: 100%; height: 420px; border: none; display: block; background: var(--surface); }
 
-  /* ── MAP SECTION ── */
-  .map-section {
-    margin-top: 32px;
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 20px; overflow: hidden;
-  }
-  .map-header {
-    padding: 18px 24px;
-    border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: space-between;
-    flex-wrap: wrap; gap: 10px;
-  }
-  .map-header h3 {
-    font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700;
-  }
-  .map-actions { display: flex; gap: 10px; }
-  #mapFrame {
-    width: 100%; height: 420px;
-    border: none; display: block;
-    background: var(--surface);
-  }
-
-  /* ── EXPORT BAR ── */
   .export-bar {
     display: flex; gap: 12px; flex-wrap: wrap;
     margin-top: 24px; padding: 20px;
     background: var(--card); border: 1px solid var(--border);
     border-radius: 16px; align-items: center;
   }
-  .export-bar span {
-    color: var(--muted); font-size: 14px; flex: 1;
-    min-width: 150px;
-  }
+  .export-bar span { color: var(--muted); font-size: 14px; flex: 1; min-width: 150px; }
 
-  /* ── LOADING ── */
+  /* Progress bar for link resolving */
+  .progress-wrap { margin-top: 12px; }
+  .progress-label { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; margin-bottom: 6px; }
+  .progress-bar-bg { background: var(--surface); border-radius: 10px; height: 6px; overflow: hidden; border: 1px solid var(--border); }
+  .progress-bar-fill { height: 100%; background: var(--accent); border-radius: 10px; transition: width 0.3s ease; width: 0%; }
+
   .loading-overlay {
-    position: fixed; inset: 0;
-    background: rgba(10,15,13,0.92);
-    backdrop-filter: blur(8px);
-    z-index: 999;
+    position: fixed; inset: 0; background: rgba(10,15,13,0.92);
+    backdrop-filter: blur(8px); z-index: 999;
     display: none; place-items: center;
   }
   .loading-overlay.show { display: grid; }
-  .loading-box {
-    text-align: center;
-    animation: fadeUp 0.3s ease both;
-  }
+  .loading-box { text-align: center; animation: fadeUp 0.3s ease both; min-width: 280px; }
   .spinner {
     width: 48px; height: 48px; border-radius: 50%;
-    border: 3px solid var(--border);
-    border-top-color: var(--accent);
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 20px;
+    border: 3px solid var(--border); border-top-color: var(--accent);
+    animation: spin 0.8s linear infinite; margin: 0 auto 20px;
   }
-  .loading-box p { color: var(--muted); font-size: 15px; }
   .loading-box strong { display: block; font-family: 'Syne', sans-serif; font-size: 20px; margin-bottom: 6px; color: var(--accent); }
+  .loading-box p { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+  #loadingDetail { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 8px; }
 
-  /* ── TOAST ── */
   .toast {
     position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
-    background: var(--card); border: 1px solid var(--border);
-    border-radius: 12px; padding: 12px 20px;
-    font-size: 14px; opacity: 0;
-    transition: all 0.3s; z-index: 9999;
-    display: flex; align-items: center; gap: 8px;
-    pointer-events: none;
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 12px 20px; font-size: 14px; opacity: 0; transition: all 0.3s;
+    z-index: 9999; display: flex; align-items: center; gap: 8px; pointer-events: none;
   }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   .toast.success { border-color: rgba(0,232,122,0.3); color: var(--accent); }
   .toast.error { border-color: rgba(255,95,87,0.3); color: var(--danger); }
 
-  /* ── ANIMATIONS ── */
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── TEMPLATE SECTION ── */
-  .template-row {
-    display: flex; gap: 12px; flex-wrap: wrap;
-    margin-top: 16px; justify-content: center;
-  }
+  .template-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; justify-content: center; }
   .template-chip {
     padding: 6px 16px; border-radius: 20px;
     background: var(--surface); border: 1px solid var(--border);
-    font-size: 13px; cursor: pointer; color: var(--muted);
-    transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+    font-size: 13px; cursor: pointer; color: var(--muted); transition: all 0.2s;
   }
   .template-chip:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
 
   @media (max-width: 600px) {
     header { padding: 12px 16px; }
     .container { padding: 24px 16px 60px; }
-    .route-card { flex-wrap: wrap; }
-    .route-dist { flex-direction: row; }
   }
 </style>
 </head>
@@ -443,43 +314,67 @@
 
 <div class="container">
 
-  <!-- HERO -->
   <div class="hero">
     <h1>Plan your <em>perfect</em><br>delivery route</h1>
-    <p>Upload your Excel file with delivery locations. We'll sort them into the optimal route — closest stop first, every time.</p>
+    <p>Upload your Excel with customer locations. Supports Google Maps short links, addresses, or coordinates — all auto-resolved.</p>
+    <div class="glink-badge"><span class="dot"></span> Google Maps links supported — maps.app.goo.gl</div>
     <div class="template-row">
       <div class="template-chip" onclick="downloadTemplate()">📄 Download Sample Excel</div>
-      <div class="template-chip" id="demoBtn" onclick="loadDemo()">⚡ Try Demo Data</div>
+      <div class="template-chip" onclick="loadDemo()">⚡ Try Demo Data</div>
     </div>
   </div>
 
-  <!-- UPLOAD ZONE -->
+  <!-- FORMAT INFO -->
+  <div class="format-info">
+    <h3>📋 Supported Location Formats in your Excel</h3>
+    <div class="format-modes">
+      <div class="format-mode highlight">
+        <div class="mode-icon">🔗</div>
+        <h4>Google Maps Short Link</h4>
+        <p>Paste <code style="font-size:11px;color:#7ab4f5">maps.app.goo.gl/xxx</code> links directly from your phone — auto-resolved to exact coordinates</p>
+      </div>
+      <div class="format-mode">
+        <div class="mode-icon">📍</div>
+        <h4>Full Address</h4>
+        <p>e.g. <em>14 Bazaar Main Rd, Madipakkam, Chennai 600091</em> — geocoded automatically</p>
+      </div>
+      <div class="format-mode">
+        <div class="mode-icon">🧭</div>
+        <h4>GPS Coordinates</h4>
+        <p>e.g. <em>12.9716, 80.1956</em> — used directly, no lookup needed</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPLOAD -->
   <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
     <span class="upload-icon">📦</span>
     <h2>Drop your Excel file here</h2>
-    <p>Supports .xlsx, .xls, .csv formats</p>
+    <p>Supports .xlsx, .xls, .csv — with Google Maps links, addresses, or coordinates</p>
     <span class="hint">CLICK TO BROWSE FILES</span>
     <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
   </div>
 
-  <!-- COLUMN MAPPER -->
+  <!-- MAPPER -->
   <div class="mapper-card" id="mapperCard">
     <div class="mapper-title">⚙️ Map your columns</div>
+
+    <div class="glink-detected" id="glinkDetected">
+      <span>🔗</span>
+      <span>Google Maps link column detected: <strong id="glinkColName"></strong> — will auto-resolve coordinates from each link</span>
+    </div>
 
     <div class="start-loc-row">
       <div class="mapper-field" style="flex:1">
         <label>Your Starting Location</label>
-        <input type="text" id="startLocation" placeholder="e.g. Mumbai Central, Mumbai"
-          style="width:100%;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color 0.2s;"
+        <input type="text" id="startLocation" placeholder="e.g. Madipakkam, Chennai  or paste a maps link"
           onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
       </div>
       <button class="btn-detect" onclick="detectLocation()">📍 Detect Me</button>
     </div>
-    <p style="font-size:12px;color:var(--muted);margin-bottom:20px;">Enter your current location / warehouse / starting point for the route.</p>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:20px;">Enter your warehouse / start point, paste a Google Maps link, or tap Detect Me.</p>
 
-    <div class="mapper-grid" id="mapperGrid">
-      <!-- Dynamically populated -->
-    </div>
+    <div class="mapper-grid" id="mapperGrid"></div>
 
     <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:8px;">
       <button class="btn-primary" id="planBtn" onclick="buildRoute()">🗺️ Plan Optimal Route</button>
@@ -487,35 +382,25 @@
     </div>
   </div>
 
-  <!-- RESULTS SECTION -->
+  <!-- RESULTS -->
   <div class="results-section" id="resultsSection">
     <div class="results-header">
-      <div>
-        <div class="results-title">Your Delivery Route</div>
-      </div>
+      <div class="results-title">Your Delivery Route</div>
       <button class="btn-secondary" onclick="resetApp()">↩ Upload New File</button>
     </div>
-
     <div class="stats-row" id="statsRow"></div>
-
     <div class="route-list" id="routeList"></div>
-
-    <!-- MAP -->
     <div class="map-section">
       <div class="map-header">
         <h3>🗺️ Route Map</h3>
-        <div class="map-actions">
-          <button class="btn-secondary" onclick="openInGoogleMaps()" style="font-size:13px;padding:8px 14px;">Open in Google Maps ↗</button>
-        </div>
+        <button class="btn-secondary" onclick="openInGoogleMaps()" style="font-size:13px;padding:8px 14px;">Open in Google Maps ↗</button>
       </div>
       <iframe id="mapFrame" src="" title="Route Map"></iframe>
     </div>
-
-    <!-- EXPORT -->
     <div class="export-bar">
       <span>Export your optimized route</span>
       <button class="btn-secondary" onclick="exportCSV()">📊 Export CSV</button>
-      <button class="btn-secondary" onclick="copyAddresses()">📋 Copy All Addresses</button>
+      <button class="btn-secondary" onclick="copyAddresses()">📋 Copy Addresses</button>
       <button class="btn-primary" onclick="openInGoogleMaps()">Navigate in Maps →</button>
     </div>
   </div>
@@ -526,36 +411,30 @@
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-box">
     <div class="spinner"></div>
-    <strong>Optimizing Route...</strong>
-    <p>Sorting stops by nearest distance</p>
+    <strong id="loadingTitle">Processing...</strong>
+    <p id="loadingMsg">Please wait</p>
+    <div class="progress-wrap">
+      <div class="progress-label" id="loadingDetail"></div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" id="progressFill"></div></div>
+    </div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── STATE ───────────────────────────────────────────────
-let rawData = [];
-let columns = [];
-let routeData = [];
+// ── STATE ──────────────────────────────────────────────────
+let rawData = [], columns = [], routeData = [];
 let userLat = null, userLng = null;
-let userLocationName = '';
 
-// ─── FILE UPLOAD ──────────────────────────────────────────
+// ── FILE UPLOAD ────────────────────────────────────────────
 const uploadZone = document.getElementById('uploadZone');
 const fileInput  = document.getElementById('fileInput');
 
 uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
 uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
-uploadZone.addEventListener('drop', e => {
-  e.preventDefault(); uploadZone.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) processFile(file);
-});
-fileInput.addEventListener('change', e => {
-  if (e.target.files[0]) processFile(e.target.files[0]);
-});
+uploadZone.addEventListener('drop', e => { e.preventDefault(); uploadZone.classList.remove('drag-over'); if (e.dataTransfer.files[0]) processFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener('change', e => { if (e.target.files[0]) processFile(e.target.files[0]); });
 
 function processFile(file) {
   const ext = file.name.split('.').pop().toLowerCase();
@@ -570,229 +449,352 @@ function processFile(file) {
         const ws = wb.Sheets[wb.SheetNames[0]];
         data = XLSX.utils.sheet_to_json(ws, { defval: '' });
       }
-      if (!data || data.length === 0) { showToast('File is empty or unreadable.', 'error'); return; }
+      if (!data || !data.length) { showToast('File is empty or unreadable.', 'error'); return; }
       rawData = data;
       columns = Object.keys(data[0]);
       showMapper();
       showToast(`✓ Loaded ${data.length} rows from "${file.name}"`, 'success');
-    } catch (err) {
-      showToast('Error reading file. Please check format.', 'error');
-    }
+    } catch (err) { showToast('Error reading file. Check format.', 'error'); }
   };
-  if (ext === 'csv') reader.readAsText(file);
-  else reader.readAsBinaryString(file);
+  if (ext === 'csv') reader.readAsText(file); else reader.readAsBinaryString(file);
 }
 
 function parseCSV(text) {
   const lines = text.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+  const headers = lines[0].split(',').map(h => h.trim().replace(/"/g,''));
   return lines.slice(1).map(line => {
-    const vals = line.split(',').map(v => v.trim().replace(/"/g, ''));
-    const obj = {};
-    headers.forEach((h, i) => obj[h] = vals[i] || '');
-    return obj;
+    const vals = line.split(',').map(v => v.trim().replace(/"/g,''));
+    const obj = {}; headers.forEach((h,i) => obj[h] = vals[i]||''); return obj;
   });
 }
 
-// ─── MAPPER UI ────────────────────────────────────────────
+// ── MAPPER ────────────────────────────────────────────────
 function showMapper() {
   const grid = document.getElementById('mapperGrid');
   const fields = [
     { key: 'nameCol',    label: 'Customer / Stop Name', emoji: '👤' },
-    { key: 'addrCol',    label: 'Address / Area',        emoji: '📍' },
-    { key: 'cityCol',    label: 'City (optional)',        emoji: '🏙️' },
-    { key: 'phoneCol',   label: 'Phone (optional)',       emoji: '📞' },
-    { key: 'notesCol',   label: 'Notes (optional)',       emoji: '📝' },
+    { key: 'locCol',     label: 'Location (Link / Address / Coords)', emoji: '📍' },
+    { key: 'phoneCol',   label: 'Phone (optional)', emoji: '📞' },
+    { key: 'notesCol',   label: 'Notes (optional)', emoji: '📝' },
   ];
   const opts = ['-- Skip --', ...columns].map(c => `<option value="${c}">${c}</option>`).join('');
-
   grid.innerHTML = fields.map(f => `
     <div class="mapper-field">
       <label>${f.emoji} ${f.label}</label>
       <select id="${f.key}">${opts}</select>
-    </div>
-  `).join('');
+    </div>`).join('');
 
   // Auto-detect columns
-  autoMap('nameCol',  ['name','customer','client','shop','store','recipient','person','delivery_name','contact']);
-  autoMap('addrCol',  ['address','addr','location','area','street','place','locality','full_address','delivery_address']);
-  autoMap('cityCol',  ['city','town','district','zone','region']);
+  autoMap('nameCol',  ['name','customer','client','shop','store','recipient','contact']);
+  autoMap('locCol',   ['location','google','link','url','maps','gmap','address','addr','place','coords','lat']);
   autoMap('phoneCol', ['phone','mobile','contact','number','cell']);
-  autoMap('notesCol', ['notes','remark','note','instruction','comment','info']);
+  autoMap('notesCol', ['notes','remark','note','instruction','comment']);
+
+  // Detect if any column has Google Maps links
+  detectGoogleLinkColumn();
+
+  document.getElementById('locCol').addEventListener('change', detectGoogleLinkColumn);
 
   document.getElementById('mapperCard').classList.add('visible');
   document.getElementById('mapperCard').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
+function detectGoogleLinkColumn() {
+  const sel = document.getElementById('locCol');
+  if (!sel) return;
+  const col = sel.value;
+  if (col === '-- Skip --') { document.getElementById('glinkDetected').classList.remove('show'); return; }
+  const sample = rawData.slice(0, 5).map(r => String(r[col]||''));
+  const hasLinks = sample.some(v => isGoogleMapsLink(v));
+  const banner = document.getElementById('glinkDetected');
+  if (hasLinks) {
+    document.getElementById('glinkColName').textContent = col;
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
 function autoMap(selectId, keywords) {
   const sel = document.getElementById(selectId);
+  if (!sel) return;
   const match = columns.find(c => keywords.some(k => c.toLowerCase().includes(k)));
   if (match) sel.value = match;
 }
 
-// ─── DETECT LOCATION ─────────────────────────────────────
+// ── GOOGLE MAPS LINK DETECTION & RESOLUTION ───────────────
+function isGoogleMapsLink(val) {
+  return /maps\.app\.goo\.gl|goo\.gl\/maps|google\.com\/maps/i.test(String(val));
+}
+
+function isCoordPair(val) {
+  return /^-?\d+\.?\d*[\s,]+-?\d+\.?\d*$/.test(String(val).trim());
+}
+
+// Extract lat/lng from a full Google Maps URL (destination_url from redirect)
+function extractCoordsFromUrl(url) {
+  // Try @lat,lng pattern
+  let m = url.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+
+  // Try !3d lat !4d lng pattern
+  m = url.match(/!3d(-?\d+\.\d+).*?!4d(-?\d+\.\d+)/);
+  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+
+  // Try query ?q=lat,lng
+  m = url.match(/[?&]q=(-?\d+\.\d+),(-?\d+\.\d+)/);
+  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+
+  return null;
+}
+
+// Extract place name from Google Maps URL
+function extractNameFromUrl(url) {
+  try {
+    // /place/NAME/ pattern
+    const m = url.match(/\/place\/([^/]+)\//);
+    if (m) return decodeURIComponent(m[1].replace(/\+/g,' ')).replace(/,.*$/,'').trim();
+  } catch(e) {}
+  return null;
+}
+
+// Extract address from Google Maps URL
+function extractAddressFromUrl(url) {
+  try {
+    const m = url.match(/\/place\/([^/]+)\//);
+    if (m) {
+      const full = decodeURIComponent(m[1].replace(/\+/g,' '));
+      return full;
+    }
+  } catch(e) {}
+  return null;
+}
+
+async function resolveGoogleLink(shortUrl) {
+  // Try to fetch the redirect URL via a CORS proxy
+  const proxies = [
+    `https://corsproxy.io/?${encodeURIComponent(shortUrl)}`,
+    `https://api.allorigins.win/raw?url=${encodeURIComponent(shortUrl)}`
+  ];
+
+  for (const proxy of proxies) {
+    try {
+      const res = await fetch(proxy, { method: 'HEAD', redirect: 'follow', signal: AbortSignal.timeout(5000) });
+      const finalUrl = res.url;
+      if (finalUrl && finalUrl.includes('google.com/maps')) {
+        const coords = extractCoordsFromUrl(finalUrl);
+        const addr   = extractAddressFromUrl(finalUrl);
+        if (coords) return { ...coords, addr: addr || shortUrl, source: 'glink' };
+      }
+    } catch(e) {}
+  }
+
+  // Fallback: try GET with allorigins to get HTML and parse redirect
+  try {
+    const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(shortUrl)}`, { signal: AbortSignal.timeout(6000) });
+    const json = await res.json();
+    const html = json.contents || '';
+    // Look for canonical URL or redirect
+    const urlMatch = html.match(/https:\/\/www\.google\.com\/maps[^"'\s]*/);
+    if (urlMatch) {
+      const fullUrl = urlMatch[0];
+      const coords = extractCoordsFromUrl(fullUrl);
+      const addr   = extractAddressFromUrl(fullUrl);
+      if (coords) return { ...coords, addr: addr || shortUrl, source: 'glink' };
+    }
+    // Also check destination_url from metadata
+    const destMatch = html.match(/"destination_url"\s*:\s*"([^"]+)"/);
+    if (destMatch) {
+      const fullUrl = destMatch[1].replace(/\\\//g,'/');
+      const coords = extractCoordsFromUrl(fullUrl);
+      const addr   = extractAddressFromUrl(fullUrl);
+      if (coords) return { ...coords, addr: addr || shortUrl, source: 'glink' };
+    }
+  } catch(e) {}
+
+  return null;
+}
+
+// ── DETECT LOCATION ───────────────────────────────────────
 function detectLocation() {
   if (!navigator.geolocation) { showToast('Geolocation not supported.', 'error'); return; }
   showToast('Detecting your location...', 'success');
   navigator.geolocation.getCurrentPosition(pos => {
-    userLat = pos.coords.latitude;
-    userLng = pos.coords.longitude;
-    const inp = document.getElementById('startLocation');
-    inp.value = `${userLat.toFixed(4)}, ${userLng.toFixed(4)}`;
-    userLocationName = 'Your Location';
+    userLat = pos.coords.latitude; userLng = pos.coords.longitude;
+    document.getElementById('startLocation').value = `${userLat.toFixed(5)}, ${userLng.toFixed(5)}`;
     showToast('📍 Location detected!', 'success');
-  }, () => {
-    showToast('Could not detect location. Enter manually.', 'error');
-  });
+  }, () => showToast('Could not detect. Enter manually.', 'error'));
 }
 
-// ─── BUILD ROUTE ──────────────────────────────────────────
+// ── BUILD ROUTE ───────────────────────────────────────────
 async function buildRoute() {
-  const addrCol  = document.getElementById('addrCol').value;
+  const locCol   = document.getElementById('locCol').value;
   const nameCol  = document.getElementById('nameCol').value;
-  const cityCol  = document.getElementById('cityCol').value;
   const phoneCol = document.getElementById('phoneCol').value;
   const notesCol = document.getElementById('notesCol').value;
   const startLoc = document.getElementById('startLocation').value.trim();
 
-  if (addrCol === '-- Skip --') { showToast('Please select the Address column.', 'error'); return; }
+  if (locCol === '-- Skip --') { showToast('Please select the Location column.', 'error'); return; }
 
-  document.getElementById('loadingOverlay').classList.add('show');
+  setLoading(true, 'Resolving Locations...', 'Reading your delivery stops');
 
-  // Parse start location
-  let startLatLng = null;
-  if (startLoc) {
-    const coordMatch = startLoc.match(/^(-?\d+\.?\d*)[,\s]+(-?\d+\.?\d*)$/);
-    if (coordMatch) {
-      startLatLng = { lat: parseFloat(coordMatch[1]), lng: parseFloat(coordMatch[2]) };
-    } else if (userLat && userLng) {
-      startLatLng = { lat: userLat, lng: userLng };
+  // Build stops array
+  const stops = rawData.map((row, i) => ({
+    id: i + 1,
+    name:  nameCol  !== '-- Skip --' ? String(row[nameCol]  || `Stop ${i+1}`) : `Stop ${i+1}`,
+    rawLoc: String(row[locCol] || '').trim(),
+    phone: phoneCol !== '-- Skip --' ? String(row[phoneCol] || '') : '',
+    notes: notesCol !== '-- Skip --' ? String(row[notesCol] || '') : '',
+    lat: null, lng: null, addr: '', source: ''
+  })).filter(s => s.rawLoc);
+
+  const total = stops.length;
+
+  // Resolve each stop
+  for (let i = 0; i < stops.length; i++) {
+    const s = stops[i];
+    const pct = Math.round((i / total) * 100);
+    setProgress(pct, `Stop ${i+1}/${total}: ${s.name}`);
+
+    if (isGoogleMapsLink(s.rawLoc)) {
+      // Google Maps short link
+      setLoading(true, 'Resolving Google Links...', `Fetching location for: ${s.name}`);
+      const result = await resolveGoogleLink(s.rawLoc);
+      if (result) {
+        s.lat = result.lat; s.lng = result.lng;
+        s.addr = result.addr || s.rawLoc;
+        s.source = 'glink';
+      }
+      await sleep(200);
+    } else if (isCoordPair(s.rawLoc)) {
+      // Direct coordinates
+      const parts = s.rawLoc.split(/[\s,]+/);
+      s.lat = parseFloat(parts[0]); s.lng = parseFloat(parts[1]);
+      s.addr = s.rawLoc; s.source = 'coords';
     } else {
-      // Use geocoding attempt via nominatim
+      // Text address — geocode via Nominatim
+      setLoading(true, 'Geocoding Addresses...', `Finding: ${s.name}`);
       try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(startLoc)}&format=json&limit=1`);
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(s.rawLoc)}&format=json&limit=1`);
         const json = await res.json();
-        if (json[0]) startLatLng = { lat: parseFloat(json[0].lat), lng: parseFloat(json[0].lon) };
-      } catch (e) { /* ignore */ }
+        if (json[0]) { s.lat = parseFloat(json[0].lat); s.lng = parseFloat(json[0].lon); s.addr = json[0].display_name || s.rawLoc; s.source = 'geocode'; }
+      } catch(e) {}
+      await sleep(300);
     }
   }
 
-  // Build stops array
-  const stops = rawData.map((row, i) => {
-    const addr = [row[addrCol], cityCol !== '-- Skip --' ? row[cityCol] : '']
-                  .filter(Boolean).join(', ');
-    return {
-      id: i + 1,
-      name:  nameCol  !== '-- Skip --' ? row[nameCol]  || `Stop ${i+1}` : `Stop ${i+1}`,
-      addr,
-      phone: phoneCol !== '-- Skip --' ? row[phoneCol] || '' : '',
-      notes: notesCol !== '-- Skip --' ? row[notesCol] || '' : '',
-      lat: null, lng: null,
-    };
-  }).filter(s => s.addr.trim());
-
-  // Geocode all addresses (batched via Nominatim)
-  for (const stop of stops) {
-    try {
-      const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(stop.addr)}&format=json&limit=1`);
-      const json = await res.json();
-      if (json[0]) { stop.lat = parseFloat(json[0].lat); stop.lng = parseFloat(json[0].lon); }
-    } catch (e) { /* ignore */ }
-    await sleep(300); // rate limit
+  // Resolve start location
+  setLoading(true, 'Almost Done...', 'Setting start point');
+  let origin = null;
+  if (startLoc) {
+    if (isGoogleMapsLink(startLoc)) {
+      const r = await resolveGoogleLink(startLoc);
+      if (r) origin = { lat: r.lat, lng: r.lng, label: r.addr || startLoc };
+    } else if (isCoordPair(startLoc)) {
+      const parts = startLoc.split(/[\s,]+/);
+      origin = { lat: parseFloat(parts[0]), lng: parseFloat(parts[1]), label: startLoc };
+    } else if (userLat && userLng) {
+      origin = { lat: userLat, lng: userLng, label: startLoc };
+    } else {
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(startLoc)}&format=json&limit=1`);
+        const json = await res.json();
+        if (json[0]) origin = { lat: parseFloat(json[0].lat), lng: parseFloat(json[0].lon), label: startLoc };
+      } catch(e) {}
+    }
   }
 
-  // Filter geocoded stops
   const geoStops = stops.filter(s => s.lat && s.lng);
-  if (geoStops.length === 0) {
-    document.getElementById('loadingOverlay').classList.remove('show');
-    showToast('Could not geocode any addresses. Check address format.', 'error');
-    return;
-  }
+  setLoading(false);
 
-  // Nearest-neighbor sort from start point
-  let origin = startLatLng || (geoStops[0] ? { lat: geoStops[0].lat, lng: geoStops[0].lng } : null);
-  const sorted = nearestNeighbor(geoStops, origin);
+  if (!geoStops.length) { showToast('Could not resolve any locations. Check your data.', 'error'); return; }
 
+  const startOrigin = origin || { lat: geoStops[0].lat, lng: geoStops[0].lng, label: geoStops[0].name };
+  const sorted = nearestNeighbor(geoStops, startOrigin);
   routeData = sorted;
-  userLocationName = startLoc || 'Start';
+  renderResults(sorted, startOrigin, stops.length - geoStops.length);
+}
 
-  document.getElementById('loadingOverlay').classList.remove('show');
-  renderResults(sorted, origin, startLoc);
+function setLoading(show, title='', msg='') {
+  document.getElementById('loadingOverlay').classList.toggle('show', show);
+  if (title) document.getElementById('loadingTitle').textContent = title;
+  if (msg)   document.getElementById('loadingMsg').textContent = msg;
+}
+
+function setProgress(pct, label) {
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('loadingDetail').textContent = label;
 }
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-// ─── NEAREST NEIGHBOR ALGORITHM ──────────────────────────
+// ── NEAREST NEIGHBOR ─────────────────────────────────────
 function nearestNeighbor(stops, origin) {
-  const remaining = [...stops];
-  const sorted = [];
+  const remaining = [...stops], sorted = [];
   let cur = origin;
-
-  while (remaining.length > 0) {
+  while (remaining.length) {
     let bestIdx = 0, bestDist = Infinity;
-    remaining.forEach((s, i) => {
-      const d = haversine(cur.lat, cur.lng, s.lat, s.lng);
-      if (d < bestDist) { bestDist = d; bestIdx = i; }
-    });
+    remaining.forEach((s, i) => { const d = haversine(cur.lat, cur.lng, s.lat, s.lng); if (d < bestDist) { bestDist = d; bestIdx = i; } });
     const best = remaining.splice(bestIdx, 1)[0];
     best.distFromPrev = haversine(cur.lat, cur.lng, best.lat, best.lng);
-    sorted.push(best);
-    cur = { lat: best.lat, lng: best.lng };
+    sorted.push(best); cur = best;
   }
   return sorted;
 }
 
 function haversine(lat1, lon1, lat2, lon2) {
-  const R = 6371;
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const R = 6371, dLat = (lat2-lat1)*Math.PI/180, dLon = (lon2-lon1)*Math.PI/180;
   const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-// ─── RENDER RESULTS ───────────────────────────────────────
-function renderResults(stops, origin, startLabel) {
-  const totalDist = stops.reduce((s, r) => s + (r.distFromPrev || 0), 0);
-  const geocodedPct = Math.round(stops.length / rawData.length * 100);
+// ── RENDER ───────────────────────────────────────────────
+function renderResults(stops, origin, failedCount) {
+  const totalDist = stops.reduce((s,r) => s + (r.distFromPrev||0), 0);
 
-  // Stats
   document.getElementById('statsRow').innerHTML = `
     <div class="stat-chip"><strong>${stops.length}</strong> stops</div>
     <div class="stat-chip"><strong>${totalDist.toFixed(1)} km</strong> total route</div>
-    <div class="stat-chip"><strong>~${Math.round(totalDist / 30 * 60)} min</strong> est. drive time</div>
-    <div class="stat-chip"><strong>${geocodedPct}%</strong> addresses found</div>
+    <div class="stat-chip"><strong>~${Math.round(totalDist/30*60)} min</strong> est. drive</div>
+    ${failedCount > 0 ? `<div class="stat-chip" style="color:var(--warn)"><strong>${failedCount}</strong> unresolved</div>` : ''}
   `;
 
-  // Route list
   const list = document.getElementById('routeList');
-  let html = '';
-
-  // Start card
-  if (startLabel) {
-    html += `<div class="route-card start-card">
+  let html = `
+    <div class="route-card start-card">
       <div class="stop-num">📍</div>
       <div class="route-info">
-        <div class="route-name">Start: ${escHtml(startLabel)}</div>
-        <div class="route-addr">Your departure point</div>
+        <div class="route-name">Start: ${escHtml(origin.label || 'Your Location')}</div>
+        <div class="route-addr">Departure point</div>
         <div class="route-tags"><span class="tag tag-green">START</span></div>
       </div>
     </div>`;
-  }
 
   stops.forEach((s, i) => {
     const dist = s.distFromPrev ? `${s.distFromPrev.toFixed(1)} km` : '—';
+    const srcTag = s.source === 'glink'
+      ? `<span class="tag tag-blue">🔗 Maps Link</span>`
+      : s.source === 'coords'
+      ? `<span class="tag tag-gray">🧭 Coords</span>`
+      : `<span class="tag tag-gray">📍 Address</span>`;
+
+    // Clean up address display — decode URL encoding from Google place names
+    let displayAddr = s.addr || s.rawLoc;
+    try { displayAddr = decodeURIComponent(displayAddr.replace(/\+/g,' ')); } catch(e) {}
+    // Trim very long addresses
+    if (displayAddr.length > 80) displayAddr = displayAddr.substring(0,77) + '...';
+
     html += `
       <div class="connector">
-        <div class="connector-line"></div>
-        <span>▼ ${dist}</span>
-        <div class="connector-line"></div>
+        <div class="connector-line"></div><span>▼ ${dist}</span><div class="connector-line"></div>
       </div>
-      <div class="route-card" style="animation-delay:${i * 0.04}s">
-        <div class="stop-num">${i + 1}</div>
+      <div class="route-card">
+        <div class="stop-num">${i+1}</div>
         <div class="route-info">
           <div class="route-name">${escHtml(s.name)}</div>
-          <div class="route-addr">${escHtml(s.addr)}</div>
+          <div class="route-addr">${escHtml(displayAddr)}</div>
           <div class="route-tags">
+            ${srcTag}
             ${s.phone ? `<span class="tag tag-gray">📞 ${escHtml(s.phone)}</span>` : ''}
             ${s.notes ? `<span class="tag tag-orange">📝 ${escHtml(s.notes)}</span>` : ''}
           </div>
@@ -801,17 +803,14 @@ function renderResults(stops, origin, startLabel) {
           <div class="dist-val">${dist}</div>
           <div class="dist-label">from prev</div>
         </div>
-      </div>
-    `;
+      </div>`;
   });
   list.innerHTML = html;
 
-  // Map embed
-  const waypoints = stops.slice(1, -1).map(s => `${s.lat},${s.lng}`).join('|');
-  const first = stops[0], last = stops[stops.length - 1];
-  const org = origin ? `${origin.lat},${origin.lng}` : `${first.lat},${first.lng}`;
-  const dest = `${last.lat},${last.lng}`;
-  const mapUrl = `https://www.google.com/maps/embed/v1/directions?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&origin=${org}&destination=${dest}&waypoints=${waypoints}&mode=driving`;
+  // Map
+  const waypoints = stops.slice(1,-1).map(s=>`${s.lat},${s.lng}`).join('|');
+  const last = stops[stops.length-1];
+  const mapUrl = `https://www.google.com/maps/embed/v1/directions?key=AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY&origin=${origin.lat},${origin.lng}&destination=${last.lat},${last.lng}&waypoints=${waypoints}&mode=driving`;
   document.getElementById('mapFrame').src = mapUrl;
 
   document.getElementById('mapperCard').classList.remove('visible');
@@ -819,91 +818,75 @@ function renderResults(stops, origin, startLabel) {
   document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
 }
 
-// ─── OPEN IN GOOGLE MAPS ─────────────────────────────────
 function openInGoogleMaps() {
   if (!routeData.length) return;
-  const origin = document.getElementById('startLocation')?.value?.trim() || '';
-  const dest = routeData[routeData.length - 1].addr;
-  const wps = routeData.slice(0, -1).map(s => encodeURIComponent(s.addr)).join('/');
-  const url = `https://www.google.com/maps/dir/${encodeURIComponent(origin || routeData[0].addr)}/${wps}/${encodeURIComponent(dest)}`;
-  window.open(url, '_blank');
+  const startEl = document.getElementById('startLocation');
+  const origin = startEl?.value?.trim() || `${routeData[0].lat},${routeData[0].lng}`;
+  const dest = `${routeData[routeData.length-1].lat},${routeData[routeData.length-1].lng}`;
+  const wps = routeData.slice(0,-1).map(s=>`${s.lat},${s.lng}`).join('/');
+  window.open(`https://www.google.com/maps/dir/${encodeURIComponent(origin)}/${wps}/${dest}`, '_blank');
 }
 
-// ─── EXPORT CSV ───────────────────────────────────────────
 function exportCSV() {
-  if (!routeData.length) return;
-  const headers = ['Stop #', 'Name', 'Address', 'Phone', 'Notes', 'Distance from Prev (km)'];
-  const rows = routeData.map((s, i) => [
-    i + 1, s.name, s.addr, s.phone, s.notes,
-    s.distFromPrev ? s.distFromPrev.toFixed(2) : ''
-  ]);
-  const csv = [headers, ...rows].map(r => r.map(v => `"${v}"`).join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv' });
-  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  const rows = routeData.map((s,i) => [i+1, s.name, s.addr||s.rawLoc, s.phone, s.notes, s.distFromPrev?.toFixed(2)||'', `${s.lat},${s.lng}`]);
+  const csv = [['Stop #','Name','Address','Phone','Notes','Dist km','Coordinates'], ...rows]
+    .map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
   a.download = 'optimized-route.csv'; a.click();
   showToast('✓ CSV exported!', 'success');
 }
 
-// ─── COPY ADDRESSES ───────────────────────────────────────
 function copyAddresses() {
-  const text = routeData.map((s, i) => `${i+1}. ${s.name} — ${s.addr}`).join('\n');
-  navigator.clipboard.writeText(text).then(() => showToast('✓ Addresses copied!', 'success'));
+  const text = routeData.map((s,i) => `${i+1}. ${s.name} — ${s.addr||s.rawLoc}`).join('\n');
+  navigator.clipboard.writeText(text).then(()=>showToast('✓ Copied!','success'));
 }
 
-// ─── DOWNLOAD TEMPLATE ───────────────────────────────────
 function downloadTemplate() {
   const ws = XLSX.utils.aoa_to_sheet([
-    ['Customer Name', 'Address', 'City', 'Phone', 'Notes'],
-    ['Raj Kumar', 'Shop 12, MG Road', 'Bangalore', '9876543210', 'Call before delivery'],
-    ['Sunita Sharma', 'Flat 4B, Andheri West', 'Mumbai', '9123456789', ''],
-    ['Vikram Patel', '22 Park Street', 'Kolkata', '9988776655', 'Leave at door'],
-    ['Priya Singh', 'B-14 Sector 18', 'Noida', '8877665544', ''],
-    ['Arun Mehta', '7 Gandhi Nagar', 'Jaipur', '9090909090', 'Morning only'],
+    ['Customer Name','Google Maps Link','Phone','Notes'],
+    ["CK's Bakery Madipakkam",  'https://maps.app.goo.gl/JUDTtvaAkqjZ46Yc6', '9841234567','Call before'],
+    ["CK's Bakery Madambakkam", 'https://maps.app.goo.gl/n4kdXTHLKeJq3WZp7', '9952345678',''],
+    ['Suresh Shop',             'Velachery Main Road, Chennai 600042',          '9843456789','Fragile'],
+    ['Meena Store',             '12.9279, 80.2133',                             '9944567890',''],
   ]);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'Deliveries');
-  XLSX.writeFile(wb, 'delivery-template.xlsx');
+  XLSX.writeFile(wb, 'routeflow-template.xlsx');
   showToast('✓ Template downloaded!', 'success');
 }
 
-// ─── DEMO DATA ────────────────────────────────────────────
 function loadDemo() {
-  const demoData = [
-    { 'Customer Name': 'Raj Kumar',    'Address': 'MG Road, Bangalore',       'City': 'Bangalore', 'Phone': '9876543210', 'Notes': 'Call before' },
-    { 'Customer Name': 'Sunita Sharma','Address': 'Andheri West, Mumbai',      'City': 'Mumbai',    'Phone': '9123456789', 'Notes': '' },
-    { 'Customer Name': 'Vikram Patel', 'Address': 'Park Street, Kolkata',      'City': 'Kolkata',   'Phone': '9988776655', 'Notes': 'Leave at door' },
-    { 'Customer Name': 'Priya Singh',  'Address': 'Sector 18, Noida',          'City': 'Noida',     'Phone': '8877665544', 'Notes': '' },
-    { 'Customer Name': 'Arun Mehta',   'Address': 'Gandhi Nagar, Jaipur',      'City': 'Jaipur',    'Phone': '9090909090', 'Notes': 'Morning only' },
-    { 'Customer Name': 'Deepa Nair',   'Address': 'Anna Nagar, Chennai',       'City': 'Chennai',   'Phone': '7766554433', 'Notes': '' },
-    { 'Customer Name': 'Mohan Das',    'Address': 'Banjara Hills, Hyderabad',  'City': 'Hyderabad', 'Phone': '9955443322', 'Notes': '' },
+  rawData = [
+    {'Customer Name':"CK's Bakery Madipakkam",  'Google Maps Link':'https://maps.app.goo.gl/JUDTtvaAkqjZ46Yc6','Phone':'9841234567','Notes':''},
+    {'Customer Name':"CK's Bakery Madambakkam", 'Google Maps Link':'https://maps.app.goo.gl/n4kdXTHLKeJq3WZp7','Phone':'9952345678','Notes':'Call before'},
+    {'Customer Name':'Velachery Outlet',         'Google Maps Link':'Velachery Main Road, Chennai 600042',       'Phone':'9843456789','Notes':''},
+    {'Customer Name':'Pallikaranai Store',        'Google Maps Link':'Pallikaranai, Chennai 600100',              'Phone':'9944567890','Notes':'Morning'},
+    {'Customer Name':'Medavakkam Branch',         'Google Maps Link':'Medavakkam, Chennai 600100',               'Phone':'9786789012','Notes':''},
   ];
-  rawData = demoData;
-  columns = Object.keys(demoData[0]);
+  columns = Object.keys(rawData[0]);
   showMapper();
-  showToast('✓ Demo data loaded! Map columns and plan your route.', 'success');
+  showToast('✓ Demo loaded with Maps links!', 'success');
 }
 
-// ─── RESET ────────────────────────────────────────────────
 function resetApp() {
-  rawData = []; columns = []; routeData = [];
-  userLat = null; userLng = null;
+  rawData=[]; columns=[]; routeData=[];
   document.getElementById('mapperCard').classList.remove('visible');
   document.getElementById('resultsSection').classList.remove('visible');
-  document.getElementById('fileInput').value = '';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.getElementById('fileInput').value='';
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
-// ─── TOAST ───────────────────────────────────────────────
-function showToast(msg, type = 'success') {
+function showToast(msg, type='success') {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = `toast ${type} show`;
-  setTimeout(() => t.className = 'toast', 3000);
+  t.textContent = msg; t.className = `toast ${type} show`;
+  setTimeout(()=>t.className='toast', 3200);
 }
 
-function escHtml(str) {
-  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 </script>
 </body>
 </html>
+  
